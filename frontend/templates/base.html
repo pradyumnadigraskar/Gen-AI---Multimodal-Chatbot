@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agentic Multimodal (Ollama)</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script defer src="/static/js/common.js"></script>
+</head>
+<body>
+  <!-- Top Nav -->
+  <nav class="topnav">
+    <div class="left">
+      <button id="historyBtn" class="btn ghost">☰ History</button>
+      <a class="link" href="/">Dashboard</a>
+    </div>
+
+    <div class="right">
+      <!-- Models dropdown moved here -->
+      <div class="dropdown" data-dropdown="models">
+        <button id="modelsBtn" class="btn ghost" data-dropdown-toggle>Models ▾</button>
+        <div class="dropdown-menu right">
+          <a href="/chat">Text</a>
+          <a href="/image">Image</a>
+          <a href="/audio">Audio</a>
+          <a href="/video">Video</a>
+        </div>
+      </div>
+
+      <!-- Profile dropdown -->
+      <div class="dropdown" data-dropdown="profile">
+        <button id="profileBtn" class="avatar-btn" data-dropdown-toggle title="Profile">
+          <span class="avatar-circle">🙂</span>
+        </button>
+        <div class="dropdown-menu right">
+          <a href="/profile">My profile</a>
+          <a href="/profile/edit">Edit profile</a>
+          <a id="logoutBtn" href="javascript:void(0)">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Layout: left drawer + page content -->
+  <div class="layout">
+    <!-- History Drawer -->
+    <aside id="historyDrawer" class="drawer">
+      <div class="drawer-header">
+        <div class="title">History</div>
+        <button id="closeHistory" class="btn ghost sm">✕</button>
+      </div>
+      <div class="drawer-body">
+        <div class="filters">
+          <button class="chip active" data-modality="all">All</button>
+          <button class="chip" data-modality="text">Text</button>
+          <button class="chip" data-modality="image">Image</button>
+          <button class="chip" data-modality="audio">Audio</button>
+          <button class="chip" data-modality="video">Video</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </aside>
+
+    <!-- Page Content -->
+    <main class="page">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

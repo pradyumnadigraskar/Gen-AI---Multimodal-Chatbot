@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .history-page { display:flex; gap:24px; padding:16px; }
+  .history-list { width: 360px; background:#fff; border:1px solid #e5e5e5; border-radius:10px; overflow:hidden; }
+  .history-item { padding:12px 14px; border-bottom:1px solid #eee; cursor:pointer; }
+  .history-item:hover { background:#f7f7f7; }
+  .muted { color:#666; font-size:12px; }
+</style>
+<div class="history-page">
+  <div class="history-list" id="historyList"></div>
+  <div>
+    <h2>How this works</h2>
+    <p>Click any chat on the left to open it in the <b>Text Chat</b> page and continue the conversation.</p>
+  </div>
+</div>
+<script>
+  async function loadHistory(){
+    const r = await fetch('/api/history/', { credentials:'include' });
+    const items = await r.json();
+    const list = document.getElementById('historyList');
+    list.innerHTML = items.map(i => `
+      <div class="history-item" data-id="${i.id}">
+        <div>${i.title || '[untitled]'}</div>
+        <div class="muted">${new Date(i.created_at).toLocaleString()}</div>
+      </div>
+    `).join('');
+    [...list.children].forEach(el => {
+      el.onclick = () => {
+        const id = el.getAttribute('data-id');
+        // open in chat page and preload by querystring
+        window.location.href = '/chat?chat_id=' + id;
+      };
+    });
+  }
+  loadHistory();
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    .dash-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+    .dash-card{ background:#0e1430; color:#e9ecff; border:1px solid #1b2551; border-radius:14px; padding:16px; }
+    .dash-card h3{ margin:0 0 8px; }
+    .dash-card p{ color:#cfd3ff; min-height:64px; }
+    .dash-card .actions{ display:flex; justify-content:flex-end; }
+    .dash-card .btn.primary{ background:#7c4dff; color:white; border:none; padding:10px 12px; border-radius:10px; cursor:pointer; }
+    .dash-hero{ margin-bottom:16px; }
+    .muted{ color:#a8b0ff; }
+  </style>
+
+  <div class="dash-hero">
+    <h1>Welcome 👋</h1>
+    <p class="muted">Local-first multimodal assistant powered by <b>Ollama</b>, <b>Stable Diffusion / A1111</b>, <b>Whisper</b>, and <b>Edge-TTS</b>.</p>
+  </div>
+
+  <div class="dash-grid">
+    <div class="dash-card">
+      <h3>Text (Chat)</h3>
+      <p>General assistant using <b>{{ 'mistral:latest' }}</b> via Ollama. Supports RAG with your Qdrant vector store.</p>
+      <div class="actions"><a class="btn primary" href="/chat">Go to Text</a></div>
+    </div>
+    <div class="dash-card">
+      <h3>Image</h3>
+      <p>Caption images with LLaVA (or Qwen-VL). Generate images with <b>Automatic1111</b> or <b>Diffusers</b> locally.</p>
+      <div class="actions"><a class="btn primary" href="/image">Go to Image</a></div>
+    </div>
+    <div class="dash-card">
+      <h3>Audio</h3>
+      <p>Transcribe with <b>faster-whisper</b>. Generate speech with <b>Edge-TTS</b> (Microsoft Neural voices).</p>
+      <div class="actions"><a class="btn primary" href="/audio">Go to Audio</a></div>
+    </div>
+    <div class="dash-card">
+      <h3>Video</h3>
+      <p>Analyze videos by sampling frames with your vision model and summarizing. Generate short clips with <b>text-to-video</b> (if enabled).</p>
+      <div class="actions"><a class="btn primary" href="/video">Go to Video</a></div>
+    </div>
+  </div>
+{% endblock %}

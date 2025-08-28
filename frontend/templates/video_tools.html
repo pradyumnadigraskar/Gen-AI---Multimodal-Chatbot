@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Video</h1>
+<section class="card">
+  <h3>Analyze a video</h3>
+  <input type="file" id="vidFile">
+  <button id="vidQueryBtn">Analyze</button>
+  <pre id="vidAnalysis"></pre>
+</section>
+<section class="card">
+  <h3>Text → Video</h3>
+  <input id="vidPrompt" placeholder="Describe your video…">
+  <button id="vidGenBtn">Generate</button>
+  <video id="vidPlayer" controls></video>
+</section>
+<script src="/static/js/video.js"></script>
+{% endblock %}

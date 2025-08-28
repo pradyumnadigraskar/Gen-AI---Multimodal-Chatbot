@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Image</h1>
+<section class="card">
+  <h3>Query an image</h3>
+  <input type="file" id="imgFile">
+  <button id="imgQueryBtn">Upload & Caption</button>
+  <pre id="imgCaption"></pre>
+</section>
+<section class="card">
+  <h3>Generate image from text</h3>
+  <input id="imgPrompt" placeholder="Describe your image…">
+  <button id="imgGenBtn">Generate</button>
+  <div id="imgOut"></div>
+</section>
+<script src="/static/js/image.js"></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Audio</h1>
+<section class="card">
+  <h3>Audio → Text (ASR)</h3>
+  <input type="file" id="audFile">
+  <button id="audQueryBtn">Transcribe</button>
+  <pre id="audTranscript"></pre>
+</section>
+<section class="card">
+  <h3>Text → Audio (TTS)</h3>
+  <input id="audText" placeholder="Enter text for speech…">
+  <button id="audGenBtn">Generate Speech</button>
+  <audio id="audPlayer" controls></audio>
+</section>
+<script src="/static/js/audio.js"></script>
+{% endblock %}

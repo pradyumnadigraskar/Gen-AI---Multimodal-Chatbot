@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My Profile</h1>
+
+<section class="card">
+  <h3>Profile Info</h3>
+  <div id="profInfo">Loading…</div>
+  <div style="margin-top:10px">
+    <a class="btn" href="/profile/edit">Edit profile</a>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Recent Chats</h3>
+  <div id="recentChats">Loading…</div>
+</section>
+
+<script>
+(async () => {
+  // profile
+  const r1 = await fetch('/api/profile/me', {credentials:'include'});
+  const me = await r1.json();
+  const box = document.getElementById('profInfo');
+  box.innerHTML = `
+    <div><b>Name:</b> ${me.name || '—'}</div>
+    <div><b>Email:</b> ${me.email}</div>
+    <div><b>Contact:</b> ${me.phone || '—'}</div>
+  `;
+
+  // recent chats
+  const r2 = await fetch('/api/profile/recent-chats', {credentials:'include'});
+  const chats = await r2.json();
+  const list = document.getElementById('recentChats');
+  if (!Array.isArray(chats) || chats.length === 0) {
+    list.textContent = 'No chats yet.';
+    return;
+  }
+  list.innerHTML = chats.map(c => `
+    <div class="list-item">
+      <div><b>[${c.modality}]</b> ${c.title || '(untitled)'} </div>
+      <div class="muted">${new Date(c.created_at).toLocaleString()}</div>
+      <div style="margin-top:6px">
+        <a class="btn" href="/chat?chat_id=${c.id}">Open</a>
+      </div>
+    </div>
+  `).join('');
+})();
+</script>
+{% endblock %}

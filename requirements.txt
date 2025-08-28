@@ -1,0 +1,26 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+jinja2==3.1.4
+pydantic==2.8.2
+pydantic-settings==2.4.0
+SQLAlchemy==2.0.34
+alembic==1.13.2
+PyMySQL==1.1.1
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+qdrant-client==1.11.3
+requests==2.32.3
+Pillow==10.4.0
+moviepy==1.0.3
+opencv-python==4.10.0.84
+numpy==2.1.0
+# ASR
+faster-whisper==1.0.3
+# Embeddings (local)
+sentence-transformers==3.0.1
+# Optional image/video pipelines (Diffusers fallback)
+diffusers==0.30.3
+transformers==4.44.2
+accelerate==0.34.2
+safetensors==0.4.5

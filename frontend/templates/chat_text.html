@@ -1,0 +1,244 @@
+
+
+
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .chat-container {
+    display: flex;
+    height: 90vh;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 250px;
+    background: #2f2f2f;
+    color: white;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+  }
+  .sidebar.collapsed {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .sidebar h2 { font-size: 18px; margin-bottom: 10px; }
+  .sidebar button {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .chat-list { flex: 1; overflow-y: auto; }
+  .chat-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #444; }
+  .chat-item:hover { background: #555; }
+  .chat-item.active { background: #3b3b3b; font-weight: 700; }
+
+  /* Chat Main */
+  .chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f4f4f4;
+    border-left: 1px solid #ccc;
+    position: relative;
+  }
+
+  /* Toggle Button */
+  .toggle-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  /* Chat Window + Input */
+  .chat-window {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .msg {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+    white-space: pre-wrap;
+  }
+  .msg.user { background: #d1f7c4; align-self: flex-end; }
+  .msg.assistant { background: #ffffff; border: 1px solid #ccc; align-self: flex-start; }
+
+  .chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ffffff;
+    background: white;
+  }
+  .chat-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ffffff;
+    color: #ffffff;
+  }
+  .chat-input button {
+    margin-left: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    background: #3597ff;
+    color: white;
+    cursor: pointer;
+  }
+</style>
+
+<div class="chat-container">
+  <!-- Sidebar -->
+  <div id="sidebar" class="sidebar">
+    <button id="newChatBtn">+ New Chat</button>
+    <h2>History</h2>
+    <div id="chatList" class="chat-list"></div>
+  </div>
+
+  <!-- Chat Main -->
+  <div class="chat-main">
+    <button class="toggle-btn" id="toggleSidebar">☰</button>
+    <div id="chatWindow" class="chat-window"></div>
+    <form id="chatForm" class="chat-input">
+      <input type="text" name="message" placeholder="Ask anything…" autocomplete="off" required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  let currentChatId = null;
+
+  // Sidebar Toggle
+  document.getElementById("toggleSidebar").onclick = () => {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+  };
+
+  async function loadChatList() {
+    const r = await fetch('/api/history', { credentials: 'include' });
+    const items = await r.ok ? await r.json() : (await (await fetch('/api/chat/list', {credentials:'include'})).json());
+    const list = document.getElementById('chatList');
+    list.innerHTML = '';
+    items.forEach(i => {
+      const el = document.createElement('div');
+      el.className = 'chat-item' + (i.id === currentChatId ? ' active' : '');
+      el.textContent = i.title || `[${i.modality}] Chat #${i.id}`;
+      el.onclick = () => loadChat(i.id);
+      list.appendChild(el);
+    });
+  }
+
+  async function loadChat(id) {
+    currentChatId = id;
+    const rr = await fetch(`/api/history/${id}`, { credentials: 'include' });
+    if (!rr.ok) {
+      alert('Failed to load chat. Are you logged in?');
+      return;
+    }
+    const data = await rr.json();
+    const box = document.getElementById('chatWindow');
+    box.innerHTML = (data.messages || []).map(m =>
+      `<div class="msg ${m.role}"><b>${m.role}:</b> ${marked.parse(m.content)}</div>`
+    ).join('');
+    box.scrollTop = box.scrollHeight;
+    loadChatList();
+  }
+
+  async function createNewChat(title = "New Chat") {
+    const res = await fetch('/api/chat/new', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      credentials: 'include',
+      body: JSON.stringify({ title })
+    });
+    if (!res.ok) {
+      alert('Failed to create chat. Are you logged in?');
+      return null;
+    }
+    const data = await res.json();
+    return data.id;
+  }
+
+  document.getElementById('newChatBtn').onclick = async () => {
+    const id = await createNewChat();
+    if (id) {
+      currentChatId = id;
+      document.getElementById('chatWindow').innerHTML = '';
+      loadChatList();
+    }
+  };
+
+  document.getElementById('chatForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const input = e.target.message;
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    if (!currentChatId) {
+      currentChatId = await createNewChat();
+      if (!currentChatId) return;
+    }
+
+    const box = document.getElementById('chatWindow');
+    box.innerHTML += `<div class="msg user"><b>user:</b> ${msg}</div>`;
+    box.scrollTop = box.scrollHeight;
+    input.value = '';
+     
+    const r = await fetch('/api/chat/send', {
+  method: 'POST',
+  headers: {'Content-Type':'application/json'},
+  credentials:'include',
+  body: JSON.stringify({ chat_id: currentChatId, message: msg })
+});
+
+    // const r = await fetch('/api/chat', {
+    //   method: 'POST',
+    //   headers: {'Content-Type':'application/json'},
+    //   credentials:'include',
+    //   body: JSON.stringify({ chat_id: currentChatId, message: msg })
+    // });
+    if (!r.ok) {
+      alert('Failed to send message. Check console/server logs.');
+      return;
+    }
+    const data = await r.json();
+    if (data.chat_id) currentChatId = data.chat_id;
+    box.innerHTML += `<div class="msg assistant"><b>assistant:</b> ${marked.parse(data.reply || '')}</div>`;
+    box.scrollTop = box.scrollHeight;
+    loadChatList();
+  };
+
+  (async () => {
+    await loadChatList();
+    if (!currentChatId) {
+      const id = await createNewChat();
+      if (id) {
+        currentChatId = id;
+        document.getElementById('chatWindow').innerHTML = '';
+        loadChatList();
+      }
+    }
+  })();
+</script>
+{% endblock %}

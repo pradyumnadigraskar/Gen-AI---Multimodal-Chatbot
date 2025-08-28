@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Edit Profile</h1>
+
+<section class="card">
+  <form id="profForm" class="row" style="flex-direction:column; gap:10px; max-width:420px">
+    <label>
+      <div>Name</div>
+      <input type="text" name="name" id="name">
+    </label>
+    <label>
+      <div>Contact No.</div>
+      <input type="text" name="phone" id="phone" placeholder="+1 555-123-4567">
+    </label>
+    <div class="row">
+      <button type="submit">Save</button>
+      <a class="btn" href="/profile" style="background:#444">Cancel</a>
+    </div>
+  </form>
+</section>
+
+<script>
+(async () => {
+  // preload current values
+  const r = await fetch('/api/profile/me', {credentials:'include'});
+  const me = await r.json();
+  document.getElementById('name').value = me.name || '';
+  document.getElementById('phone').value = me.phone || '';
+})();
+
+document.getElementById('profForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = new FormData(e.target);
+  const r = await fetch('/api/profile/update', {
+    method: 'POST',
+    body: data,
+    credentials: 'include'
+  });
+  if (!r.ok) {
+    const txt = await r.text();
+    alert('Update failed: ' + txt);
+    return;
+  }
+  alert('Profile updated!');
+  location.href = '/profile';
+});
+</script>
+{% endblock %}

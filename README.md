@@ -1,5 +1,6 @@
 # Gen AI - Multimodal Chatbot
 
+![Project Banner](img/bnr.png)
 > Local-first agentic multimodal assistant with Text, Image, Audio, and Video tools. Powered by FastAPI, Ollama (Mistral/LLaVA), Diffusers or Automatic1111, faster-whisper ASR, and Edge-TTS. Includes JWT auth, history, and user profiles.
 
 ---
@@ -231,16 +232,16 @@ README.md
 
 Place your images in the `img/` folder with these filenames:
 
-- Edit Profile page → `img/e.png`
-- Updated Profile page → `img/upd.png`
-- My Profile page → `img/my.png`
-- Image Generation → `img/img-gen.png`
-- Image Captioning → `img/img-capt.png`
-- Video Generation → `img/video-gen.png`
-- Text Model (Chat) → `img/txt.png`
-- Text-to-Speech (TTS) → `img/tts.png`
-- Speech-to-Text (STT) → `img/stt.png`
-- History → `img/history.png`
+![Project Banner](img/e.png)
+![Updated Profile page](img/upd.png)
+![My Profile page](img/my.png)
+![Image Generation](img/img-gen.png)
+![Image Captioning](img/img-capt.png)
+![Video Generation](img/video-gen.png)
+![Text Model (Chat)](img/txt.png)
+![Text-to-Speech (TTS)](img/tts.png)
+![Speech-to-Text (STT)](img/stt.png)
+![History](img/history.png)
 
 ```markdown
 ![Edit Profile](img/e.png)
